@@ -190,18 +190,15 @@ def main():
         print("   (No auth token - rate limit is ~60 requests/hour)")
         print("   Tip: set GITHUB_TOKEN env var or pass --token for 5000 req/hr\n")
 
-    # 1. Fetch workflow definitions
     workflows = fetch_workflows(repo, token)
     wf_path = os.path.join(args.output_dir, f"{safe_repo}_workflows.csv")
     save_workflows_csv(workflows, wf_path)
 
-    # 2. Fetch runs
     print(f"\n  Fetching up to {args.max_runs} workflow runs...")
     runs = fetch_all_runs(repo, args.max_runs, token, args.created)
     runs_path = os.path.join(args.output_dir, f"{safe_repo}_runs.csv")
     save_runs_csv(runs, workflows, runs_path)
 
-    # 3. Optionally fetch jobs (this is expensive on API calls)
     if args.fetch_jobs:
         sample = runs[:args.jobs_sample]
         print(f"\n   Fetching jobs for {len(sample)} runs (this may take a while)...")
@@ -217,7 +214,6 @@ def main():
         jobs_path = os.path.join(args.output_dir, f"{safe_repo}_jobs.csv")
         save_jobs_csv(all_jobs, jobs_path)
 
-    # Summary
     print(f"\n{'='*60}")
     print(f"  Summary for {repo}:")
     print(f"   Workflows: {len(workflows)}")
