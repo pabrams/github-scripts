@@ -15,8 +15,8 @@ import sys
 import time
 from urllib.request import Request, urlopen
 from urllib.error import HTTPError
+from urllib.parse import quote
 from datetime import datetime
-
 
 def fetch_json(url, token=None):
     headers = {"Accept": "application/vnd.github.v3+json"}
@@ -53,7 +53,7 @@ def fetch_all_runs(repo, max_runs, token=None, created_filter=None):
     while len(runs) < max_runs:
         url = f"https://api.github.com/repos/{repo}/actions/runs?per_page={per_page}&page={page}"
         if created_filter:
-            url += f"&created={created_filter}"
+            url += f"&created={quote(created_filter)}"
         print(f"  Fetching page {page} (have {len(runs)} runs so far)...")
         data = fetch_json(url, token)
 
@@ -63,7 +63,7 @@ def fetch_all_runs(repo, max_runs, token=None, created_filter=None):
 
         runs.extend(batch)
         page += 1
-        time.sleep(0.5)  # be polite
+        time.sleep(0.5)
 
     return runs[:max_runs]
 
